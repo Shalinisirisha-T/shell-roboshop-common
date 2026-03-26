@@ -1,10 +1,22 @@
-#!/bin/bash
+[Unit]
+Description=Payment Service
 
-source ./common.sh
-app_name=payment
+[Service]
+User=root
+WorkingDirectory=/app
+// highlight-start
+Environment=CART_HOST=cart.daws88s.online
+Environment=CART_PORT=8080
+Environment=USER_HOST=user.daws88s.online
+Environment=USER_PORT=8080
+Environment=AMQP_HOST=rabbitmq.daws88s.online
+// highlight-end
+Environment=AMQP_USER=roboshop
+Environment=AMQP_PASS=roboshop123
 
-check_root
-app_setup
-python_setup
-systemd_setup
-print_total_time
+ExecStart=/usr/local/bin/uwsgi --ini payment.ini
+ExecStop=/bin/kill -9 $MAINPID
+SyslogIdentifier=payment
+
+[Install]
+WantedBy=multi-user.target
